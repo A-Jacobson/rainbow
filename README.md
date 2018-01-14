@@ -24,7 +24,7 @@ pip install tensorboardX
 - [DQN tutorial](https://github.com/A-Jacobson/rainbow/blob/master/Minimal_DQN.ipynb)
 - Vanilla DQN agent class
 
-## Useage
+## Usage
 To train an agent on breakout for 20000 episodes.
 ```
 python train.py --env Breakout-v0 --num_episodes 20000 --exp_name breakoutdqn
