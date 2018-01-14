@@ -38,12 +38,12 @@ class DQAgent:
         self.save_path = os.path.join(checkpoint_dir, exp_name + '.pkl')
         self.logdir = os.path.join('runs', exp_name)
 
-    def calculate_epsilon(self, exploration_start, exploration_end, last_exploration_frame):
+    def calculate_epsilon(self, epsilon_max, epsilon_min, decay_rate):
         """
         calculates epsilon value given steps done and speed of decay
         """
-        epsilon = exploration_end + (exploration_start - exploration_end) * \
-                  math.exp(-1. * self.current_step / last_exploration_frame)
+        epsilon = epsilon_min + (epsilon_max - epsilon_min) * \
+                  math.exp(-decay_rate * self.current_step)
         return epsilon
 
     def select_action(self, state, epsilon):
@@ -62,16 +62,16 @@ class DQAgent:
         state = Variable(process_state(state), volatile=True).cuda()
         return int(self.q_network(state).data.max(1)[1])
 
-    def learn(self, num_episodes, batch_size=32, capacity=1000000, lr=1e-4,
-              exploration_start=0.9, exploration_end=0.05,
-              last_exploration_frame=1000000, render=False,
+    def learn(self, num_episodes, batch_size=32, capacity=500000, lr=2e-4,
+              epsilon_max=0.9, epsilon_min=0.05,
+              decay_rate=1e-5, render=False,
               checkpoint_interval=20):
 
         self.replay_memory = ReplayMemory(capacity)
         cudnn.benchmark = True
 
         if len(self.replay_memory) < 50000:
-            print('populating replay memory..')
+            print('populating replay memory...')
             self.prime_replay_memory()
 
         writer = SummaryWriter(self.logdir)
@@ -85,7 +85,7 @@ class DQAgent:
                 if render:
                     self.environment.render()
 
-                epsilon = self.calculate_epsilon(exploration_start, exploration_end, last_exploration_frame)
+                epsilon = self.calculate_epsilon(epsilon_max, epsilon_min, decay_rate)
                 action = self.select_action(state, epsilon)  # selection an action
                 next_state, reward, done, info = self.environment.step(action)  # carry out action/observe reward
 

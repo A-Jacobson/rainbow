@@ -14,7 +14,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    env = wrap_deepmind(gym.make(args.env), frame_stack=True)
+    env = wrap_deepmind(gym.make(args.env), frame_stack=True, episode_life=False)
     q_network = DQN(env.action_space.n).cuda()
 
     agent = DQAgent(q_network, env)
