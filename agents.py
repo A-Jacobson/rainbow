@@ -174,7 +174,7 @@ class DQAgent:
 
     def load_checkpoint(self, checkpoint_path):
         checkpoint = torch.load(checkpoint_path)
-        self.q_network.load_state_dict(checkpoint['checkpoints'])
+        self.q_network.load_state_dict(checkpoint['weights'])
         self.current_step = checkpoint['current_step']
         self.current_episode = checkpoint['current_episode']
 
