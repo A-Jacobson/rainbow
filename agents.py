@@ -5,11 +5,12 @@ import random
 import torch
 from tensorboardX import SummaryWriter
 from torch import nn
-from torch.backends import cudnn
 from torch.autograd import Variable
+from torch.backends import cudnn
 from torch.optim import Adam
 from tqdm import tqdm
 
+from memory import ReplayMemory
 from utils import process_state
 
 
@@ -18,7 +19,7 @@ class DQAgent:
     DeepQ Agent without bells and whistles. Uses single Q network and replay memory to interact with environment.
     """
 
-    def __init__(self, q_network, replay_memory, environment, exp_name='dqn',
+    def __init__(self, q_network, environment, exp_name='dqn',
                  checkpoint_dir='checkpoints'):
         """
         Args:
@@ -28,13 +29,13 @@ class DQAgent:
             save_path:
         """
         self.q_network = q_network
-        self.replay_memory = replay_memory
+        self.replay_memory = None
         self.environment = environment
 
         # book keeping
         self.current_step = 0
         self.current_episode = 0
-        self.save_path = os.path.join(checkpoint_dir, exp_name+'.pkl')
+        self.save_path = os.path.join(checkpoint_dir, exp_name + '.pkl')
         self.logdir = os.path.join('runs', exp_name)
 
     def calculate_epsilon(self, exploration_start, exploration_end, last_exploration_frame):
@@ -61,11 +62,12 @@ class DQAgent:
         state = Variable(process_state(state), volatile=True).cuda()
         return int(self.q_network(state).data.max(1)[1])
 
-    def learn(self, num_episodes, batch_size=32, lr=1e-4,
+    def learn(self, num_episodes, batch_size=32, capacity=1000000, lr=1e-4,
               exploration_start=0.9, exploration_end=0.05,
               last_exploration_frame=1000000, render=False,
               checkpoint_interval=20):
 
+        self.replay_memory = ReplayMemory(capacity)
         cudnn.benchmark = True
 
         if len(self.replay_memory) < 50000:

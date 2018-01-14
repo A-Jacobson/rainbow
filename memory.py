@@ -1,12 +1,15 @@
 import random
-from utils import process_state
+
 import torch
+
+from utils import process_state
 
 
 class ReplayMemory:
     """
     samples are stored as ('state', 'action', 'next_state', 'reward', done)
     """
+
     def __init__(self, capacity):
         self.capacity = capacity
         self.samples = []
@@ -49,5 +52,3 @@ class ReplayMemory:
 
     def __len__(self):
         return len(self.samples)
-
-

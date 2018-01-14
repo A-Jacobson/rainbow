@@ -1,9 +1,10 @@
 import argparse
+
 import gym
-from atari_wrappers import wrap_deepmind
+
 from agents import DQAgent
+from atari_wrappers import wrap_deepmind
 from models import DQN
-from memory import ReplayMemory
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -16,11 +17,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     env = wrap_deepmind(gym.make(args.env), frame_stack=True)
-    memory = ReplayMemory(args.capacity)
     q_network = DQN(env.action_space.n).cuda()
 
-    agent = DQAgent(q_network, memory, env, exp_name=args.exp_name)
+    agent = DQAgent(q_network, env, exp_name=args.exp_name)
     if args.checkpoint:
         agent.load_checkpoint(args.checkpoint)
-    agent.learn(args.num_episodes)
-
+    agent.learn(args.num_episodes, capacity=args.capacity)
