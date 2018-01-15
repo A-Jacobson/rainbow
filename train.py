@@ -31,12 +31,12 @@ if __name__ == "__main__":
 
     if args.agent_type == 'dqn':
         q_network = DQN(env.action_space.n).cuda()
-        agent = DQAgent(q_network, env)
+        agent = DQAgent(q_network, env, name=args.agent_name)
 
     elif args.agent_type == 'ddqn':
         q_network = DQN(env.action_space.n).cuda()
         target_network = DQN(env.action_space.n).cuda()
-        agent = DDQAgent(q_network, target_network, env)
+        agent = DDQAgent(q_network, target_network, env, name=args.agent_name)
 
     if args.resume_training:
         agent.load_agent(args.agent_name)
