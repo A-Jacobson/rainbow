@@ -3,3 +3,4 @@ runs/
 __pycache__/
 .idea/
 .cache/
+checkpoints/

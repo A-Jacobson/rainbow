@@ -25,13 +25,13 @@ pip install tensorboardX
 - Vanilla DQN agent class
 
 ## Usage
-To train an agent on breakout for 20000 episodes.
+To train an agent on breakout for 2000000 steps.
 ```
-python train.py --env Breakout-v0 --num_episodes 20000 --exp_name breakoutdqn
+python train.py --env Breakout-v0 --num_steps 2000000 --agent_name breakoutdqn
 ```
 
 To watch your agent play 20 episodes of breakout.
 ```
-python play.py --env Breakout-v0 --num_episodes 20 --checkpoint checkpoints/breakoutdqn.pkl
+python play.py --env Breakout-v0 --num_episodes 20 --agent_name breakoutdqn
 ```
 
